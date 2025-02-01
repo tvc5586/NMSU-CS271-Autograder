@@ -6,7 +6,7 @@
 
 **At this point, the autograder only works with Lab 2!**
 
-This is an autograder for NMSU CS271 course. It will automatically pull all students' repos from Github Classroom and compare the outputs of students' code with the correct one. Based on the results of the comparisons, it will automatically assign scores to each student.
+This is an autograder for NMSU CS271 course. It will automatically pull all students' repos from Github Classroom and compare the outputs of students' code with the correct one. Based on the results of the comparisons, it will automatically assign a score to each student and update the *Gradebook* file accordingly.
 
 ## Requirements
 
