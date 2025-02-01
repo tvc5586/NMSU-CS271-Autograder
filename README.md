@@ -10,9 +10,9 @@ This is an autograder for NMSU CS271 course. It will automatically pull all stud
 
 ## Requirements
 
-This program requires you to have the [Github CLI Tool](https://github.com/cli/cli) installed.
+This program requires the [Github CLI Tool](https://github.com/cli/cli).
 
-After finishing installing the Github CLI Tool, you need to run `gh extension install github/gh-classroom` to install the classroom extension.
+After finishing installing the Github CLI Tool, run `gh extension install github/gh-classroom` to install the classroom extension.
 
 After finishing installing the extension, run `gh auth login` to authenticate your Github account.
 
@@ -21,7 +21,7 @@ The autograder requires `Python 3` and the following libraries to function:
 
 ## How to run this program
 
-You can run this autograder by using this command: `python3 Autograder.py --classroom-ID=<Github classroom ID> --assignment="<Assignment name>" --github-file-name="<Github classroom grades file>" --grade-file-name="<Canvas grades file>" --code-name="<Name of the program>" --compile-command="<Compile commands>" --program-arguments=<Arguments to the program>`
+One can run this autograder by using this command: `python3 Autograder.py --classroom-ID=<Github classroom ID> --assignment="<Assignment name>" --github-file-name="<Github classroom grades file>" --grade-file-name="<Canvas grades file>" --code-name="<Name of the program>" --compile-command="<Compile commands>" --program-arguments=<Arguments to the program>`
 
 **All command-line arguments to this program are required for this program to run!**
 
@@ -46,7 +46,7 @@ You can run this autograder by using this command: `python3 Autograder.py --clas
 
 ## Contact
 
-If you have any questions, feel free to contact the following people
+If there are any questions, feel free to contact the following people
 
 	Autograder creator: tvc5586@nmsu.edu
 	Course instructor: joncook@nmsu.edu
