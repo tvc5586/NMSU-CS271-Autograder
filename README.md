@@ -48,6 +48,6 @@ You can run this autograder by using this command: `python3 Autograder.py --clas
 
 If you have any questions, feel free to contact the following people
 
-		Autograder creator: tvc5586@nmsu.edu
-		Course instructor: joncook@nmsu.edu
+	Autograder creator: tvc5586@nmsu.edu
+	Course instructor: joncook@nmsu.edu
 
