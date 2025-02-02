@@ -96,7 +96,6 @@ def auto_grade(args):
 	gradeSheet = pd.read_csv(gradeFile)
 
 	# Get appropriate assignment column
-	
 	for column in gradeSheet.columns:
 		if assignment in column:
 			assignmentColumn = column
@@ -108,9 +107,9 @@ def auto_grade(args):
 		githubInfo['roster_identifier']
 	):
 		for name, nmsuID in zip(
-		gradeSheet['Student'], 
-		gradeSheet['SIS Login ID']
-	):
+			gradeSheet['Student'], 
+			gradeSheet['SIS Login ID']
+		):
 			if studentID == nmsuID:
 				# TODO: modify to work with multiple params
 				script = f"""{compileCommand} {assignmentName}-submissions/{githubLink}/{codeName} &&
@@ -119,7 +118,8 @@ def auto_grade(args):
 				result = subprocess.run(
 					script, shell = True, 
 					capture_output = True, 
-					text = True)
+					text = True
+				)
 					
 				output = str(result.stdout)
 
@@ -139,10 +139,6 @@ def auto_grade(args):
 				
 				else:
 					print(f"{name} Failed\nFolder name: {githubLink}\n")
-					
-			# TODO: automatic zero for everyone who didn't submit
-			else:
-				pass
 				
 	#for i, j in zip(gradeSheet['Student'], gradeSheet[f'{assignmentColumn}']):
 		#print(f"{i}'s score is {j}")
