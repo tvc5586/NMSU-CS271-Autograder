@@ -112,6 +112,9 @@ def auto_grade(args):
 	fullScore = gradeSheet[f"{assignmentColumn}"][0]
 	tempScore = 0
 	
+	# Collect all failed students
+	failedAnswers = set()
+    
 	# Loop through students' files and assign grades
 	# or report students whose code is not correct
 	for githubLink, studentID in zip(
@@ -141,7 +144,7 @@ def auto_grade(args):
 						tempScore += fullScore / len(correctAnswers)
 				
 					else:
-						print(f"{name} Failed\nFolder name: {githubLink}\n")
+						failedAnswers.add(f"{name} Failed\nFolder name: {githubLink}\n")
 				
 				# Assign scores
 				gradeSheet.loc[
@@ -152,6 +155,10 @@ def auto_grade(args):
 				# Reset temp score
 				tempScore = 0
 	
+	# Print failed answers
+	for studentDict in failedAnswers:
+		print(studentDict)
+    
 	# Students who don't have a repo gets no points
 	gradeSheet[f'{assignmentColumn}'] = gradeSheet[f'{assignmentColumn}'].fillna(0)
 	
