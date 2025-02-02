@@ -42,7 +42,6 @@ One can run this autograder by using this command: `python3 Autograder.py --clas
 - Making testing students' code more comprehensive by modifying the autograder so that it can process multiple program arguments at the same time
 - Convert the `reference_code` function into a separate file to facilitate modification
 - Automatically deduct points from partially correct answers
-- Automatically assign 0 to students who didn't submit
 
 ## Contact
 
