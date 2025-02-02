@@ -19,7 +19,7 @@ def handle_inputs():
 						required=True)
 	parser.add_argument("--grade-file-name", type = str,
 						dest = "gradeFile",
-						help = "Canvas grades file", 
+						help = "Canvas gradebook file", 
 						required=True)
 	parser.add_argument("--code-name", type = str,
 						dest = "codeName",
@@ -34,6 +34,12 @@ def handle_inputs():
 						dest = "programParameters",
 						help = "Arguments for the program", 
 						required=True)
+	parser.add_argument("--show-grades", action = "store_true",
+						dest = "showGrades",
+						help = "Show students' grades")
+	parser.add_argument("--store-grades", action = "store_true",
+						dest = "storeGrades",
+						help = "Store students' grades to Canvas gradebook")
 						
 	args = parser.parse_args()
 	
@@ -42,7 +48,6 @@ def handle_inputs():
 # TODO: convert this into a separate file
 def reference_code(programParameters):
 
-	# TODO: put all outputs in a list
 	# TODO: modify to take in multiple arguments
 	
 	triangle, square = "", ""
@@ -66,7 +71,7 @@ def reference_code(programParameters):
 		if i != programParameters:
 			square += "\n"
 	
-	return triangle, square
+	return [triangle, square]
 	
 def auto_grade(args):
 	
@@ -77,16 +82,19 @@ def auto_grade(args):
 	codeName = args.codeName
 	compileCommand = args.compileCommand
 	# TODO: Convert this into list so multiple params can be tested
-	programParameters = args.programParameters 
+	programParameters = args.programParameters
+	showGrades = args.showGrades
+	storeGrades = args.storeGrades
 	
-	# TODO: put all reference outputs to a list
-	triangle, square = reference_code(programParameters)
+	# Put all reference outputs to a list
+	correctAnswers = reference_code(programParameters)
 	
 	# Download students' repos
 	classroomLink = ["gh", "classroom", "clone", "student-repos", "-a" f"{classroomID}"]
 	_ = subprocess.run(classroomLink)
 	
-	print("\n\n " +' Run Tests '.center(70, '*'))
+	# Separator
+	print("\n\n " +' Run Tests '.center(70, '*') + "\n\n")
 	
 	# Read student's github information
 	githubInfo = pd.read_csv(githubFile)
@@ -100,6 +108,10 @@ def auto_grade(args):
 		if assignment in column:
 			assignmentColumn = column
 
+	# Set scores of the assignment
+	fullScore = gradeSheet[f"{assignmentColumn}"][0]
+	tempScore = 0
+	
 	# Loop through students' files and assign grades
 	# or report students whose code is not correct
 	for githubLink, studentID in zip(
@@ -115,34 +127,48 @@ def auto_grade(args):
 				script = f"""{compileCommand} {assignmentName}-submissions/{githubLink}/{codeName} &&
 							 ./test {programParameters}"""
 				
+				# Get output
 				result = subprocess.run(
 					script, shell = True, 
 					capture_output = True, 
-					text = True
-				)
+					text = True)
 					
 				output = str(result.stdout)
 
-				# TODO: Loop through all refence outputs
-				if triangle in output and square in output:
-					gradeSheet.loc[
-						gradeSheet['Student'] == name,
-						f"{assignmentColumn}"
-					] = gradeSheet[f"{assignmentColumn}"][0] # Full score
-					
-				elif triangle in output or square in output:
-					# TODO: automatic reduce points based on number of passed tests
-					gradeSheet.loc[
-						gradeSheet['Student'] == name,
-						f"{assignmentColumn}"
-					] = gradeSheet[f"{assignmentColumn}"][0] - 2
+				# Compare answers
+				for answer in correctAnswers:				
+					if answer in output:
+						tempScore += fullScore / len(correctAnswers)
 				
-				else:
-					print(f"{name} Failed\nFolder name: {githubLink}\n")
+					else:
+						print(f"{name} Failed\nFolder name: {githubLink}\n")
 				
-	#for i, j in zip(gradeSheet['Student'], gradeSheet[f'{assignmentColumn}']):
-		#print(f"{i}'s score is {j}")
-	gradeSheet.to_csv(f"{gradeFile_graded}", header = True, index = False)
+				# Assign scores
+				gradeSheet.loc[
+					gradeSheet['Student'] == name,
+					f"{assignmentColumn}"
+				] = tempScore
+				
+				# Reset temp score
+				tempScore = 0
+	
+	# Students who don't have a repo gets no points
+	gradeSheet[f'{assignmentColumn}'] = gradeSheet[f'{assignmentColumn}'].fillna(0)
+	
+	# Show grades if requested
+	if showGrades:		
+		# Separator
+		print("\n\n " +' Grades '.center(70, '*') + "\n\n")
+		
+		for i, j in zip(gradeSheet['Student'][1:], gradeSheet[f'{assignmentColumn}'][1:]):
+			print(f"{i}'s score is {j}")
+	
+	# Store grades if requested
+	if storeGrades:
+		gradeSheet.to_csv(f"{gradeFile}", header = True, index = False)
+		
+		# Separator
+		print("\n\n " +' Gradebook updated '.center(70, '*') + "\n\n")
 
 
 if __name__ == "__main__":
