@@ -36,12 +36,13 @@ One can run this autograder by using this command: `python3 Autograder.py --clas
 |`--code-name`        |Name of the program students need to complete             |
 |`--compile-command`  |Necessary commands to compile students' code              |
 |`--program-arguments`|Arguments used to run the compiled code                   |
+|`--show-grades`      |(Optional) Display grades on terminal                     |
+|`--store-grades`     |(Optional) Saving grades to Canvas's *Gradebook* file     |
 
 ## To-Do List
 
 - Making testing students' code more comprehensive by modifying the autograder so that it can process multiple program arguments at the same time
 - Convert the `reference_code` function into a separate file to facilitate modification
-- Automatically deduct points from partially correct answers
 
 ## Contact
 
