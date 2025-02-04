@@ -13,6 +13,7 @@ This is an autograder for NMSU CS271 course. It will automatically pull all stud
 ~~This program requires the [Github CLI Tool](https://github.com/cli/cli).
 After finishing installing the Github CLI Tool, run `gh extension install github/gh-classroom` to install the classroom extension.
 After finishing installing the extension, run `gh auth login` to authenticate your Github account.~~
+
 Github's CLI Tool has a bug that forbids it to update students' commits. Therefore, the current version uses `git` and `ssh clone` instead.
 
 The autograder requires `Python 3` and the following libraries to function:
