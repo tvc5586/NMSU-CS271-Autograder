@@ -1,7 +1,6 @@
 import argparse
 import subprocess
 import pandas as pd
-import numpy as np
 
 def handle_inputs():
 	parser = argparse.ArgumentParser(description = "Process necessary arguments")
