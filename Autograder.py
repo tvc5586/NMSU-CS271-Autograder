@@ -1,14 +1,16 @@
 import argparse
 import subprocess
 import pandas as pd
+import numpy as np
 
 def handle_inputs():
 	parser = argparse.ArgumentParser(description = "Process necessary arguments")
 	
-	parser.add_argument("--classroom-ID", type = int,
-						dest = "classroomID",
-						help = "Github Classroom ID indicated by the download option", 
-						required=True)
+	# Classroom's download has bug that forbids it to clone new commits
+	#parser.add_argument("--classroom-ID", type = int,
+	#					dest = "classroomID",
+	#					help = "Github Classroom ID indicated by the download option", 
+	#					required=True)
 	parser.add_argument("--assignment", type = str,
 						dest = "assignment",
 						help = "Assignment name indicated on Canvas", 
@@ -75,7 +77,8 @@ def reference_code(programParameters):
 	
 def auto_grade(args):
 	
-	classroomID = args.classroomID
+	# Classroom's download has bug that forbids it to clone new commits
+	#classroomID = args.classroomID
 	assignment = args.assignment
 	githubFile = args.githubFile
 	gradeFile = args.gradeFile
@@ -89,20 +92,13 @@ def auto_grade(args):
 	# Put all reference outputs to a list
 	correctAnswers = reference_code(programParameters)
 	
-	# Download students' repos
-	classroomLink = ["gh", "classroom", "clone", "student-repos", "-a" f"{classroomID}"]
-	_ = subprocess.run(classroomLink)
-	
-	# Separator
-	print("\n\n " +' Run Tests '.center(70, '*') + "\n\n")
-	
 	# Read student's github information
 	githubInfo = pd.read_csv(githubFile)
 	assignmentName = githubInfo['assignment_name'][0]
 
 	# Read grading sheet
 	gradeSheet = pd.read_csv(gradeFile)
-
+	
 	# Get appropriate assignment column
 	for column in gradeSheet.columns:
 		if assignment in column:
@@ -111,57 +107,68 @@ def auto_grade(args):
 	# Set scores of the assignment
 	fullScore = gradeSheet[f"{assignmentColumn}"][0]
 	tempScore = 0
+    
+	# Download students' repos
+	for i in githubInfo['student_repository_url'][1:]:
+		link = i.split("/", 3)[3]
+		githubDownload = ['git', 'clone', f'git@github.com:{link}.git']
+		_ = subprocess.run(githubDownload)
+	
+	# Separator
+	print("\n\n " +' Run Tests '.center(70, '*') + "\n\n")
 	
 	# Collect all failed students
 	failedAnswers = set()
-    
+
 	# Loop through students' files and assign grades
 	# or report students whose code is not correct
 	for githubLink, studentID in zip(
-		githubInfo['student_repository_name'], 
+		githubInfo['student_repository_name'],
 		githubInfo['roster_identifier']
 	):
 		for name, nmsuID in zip(
-			gradeSheet['Student'], 
+			gradeSheet['Student'],
 			gradeSheet['SIS Login ID']
 		):
 			if studentID == nmsuID:
 				# TODO: modify to work with multiple params
-				script = f"""{compileCommand} {assignmentName}-submissions/{githubLink}/{codeName} &&
-							 ./test {programParameters}"""
-				
+				script = f"""{compileCommand} {githubLink}/{codeName} &&
+								         ./test {programParameters}"""
+
 				# Get output
 				result = subprocess.run(
-					script, shell = True, 
-					capture_output = True, 
+					script, shell = True,
+					capture_output = True,
 					text = True)
-					
+
 				output = str(result.stdout)
 
 				# Compare answers
-				for answer in correctAnswers:				
+				for answer in correctAnswers:
 					if answer in output:
 						tempScore += fullScore / len(correctAnswers)
-				
+
 					else:
 						failedAnswers.add(f"{name} Failed\nFolder name: {githubLink}\n")
-				
+
 				# Assign scores
 				gradeSheet.loc[
 					gradeSheet['Student'] == name,
 					f"{assignmentColumn}"
 				] = tempScore
-				
-				# Reset temp score
-				tempScore = 0
-	
+
+			# Reset temp score
+			tempScore = 0
+
 	# Print failed answers
 	for studentDict in failedAnswers:
 		print(studentDict)
-    
-	# Students who don't have a repo gets no points
-	gradeSheet[f'{assignmentColumn}'] = gradeSheet[f'{assignmentColumn}'].fillna(0)
-	
+		
+	# Print student who didn't submit
+	for i, j in zip(gradeSheet['Student'][1:], gradeSheet[f'{assignmentColumn}'][1:]):
+		if str(j) == "nan":
+			print(f"{i} didn't submit")
+			
 	# Show grades if requested
 	if showGrades:		
 		# Separator
@@ -176,7 +183,7 @@ def auto_grade(args):
 		
 		# Separator
 		print("\n\n " +' Gradebook updated '.center(70, '*') + "\n\n")
-
+	
 
 if __name__ == "__main__":
 	args = handle_inputs()
