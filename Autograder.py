@@ -2,6 +2,9 @@ import argparse
 import subprocess
 import pandas as pd
 
+from Reference import reference_code
+from Execution import CLI_execution
+
 def handle_inputs():
 	parser = argparse.ArgumentParser(description = "Process necessary arguments")
 	
@@ -46,34 +49,12 @@ def handle_inputs():
 	
 	return args
 
-# TODO: convert this into a separate file
-def reference_code(programParameters):
+def reverse_name(name):
+	
+	firstName, lastName = name.split(", ")[1], name.split(", ")[0]
+	
+	return f"{firstName.rjust(10)} {lastName.rjust(18)}"
 
-	# TODO: modify to take in multiple arguments
-	
-	triangle, square = "", ""
-	
-	# Create triangle
-	for i in range(programParameters):
-		for j in range(i + 1):
-			triangle += "*"
-		
-		if i != programParameters - 1:
-			triangle += "\n"
-
-	# Create square
-	for i in range(programParameters + 1):
-		for j in range(programParameters + 1):
-			if i % programParameters == 0 or j % programParameters == 0:
-				square += "*"
-			else:
-				square += " "
-		
-		if i != programParameters:
-			square += "\n"
-	
-	return [triangle, square]
-	
 def auto_grade(args):
 	
 	# Classroom's download has bug that forbids it to clone new commits
@@ -130,17 +111,7 @@ def auto_grade(args):
 			gradeSheet['SIS Login ID']
 		):
 			if studentID == nmsuID:
-				# TODO: modify to work with multiple params
-				script = f"""{compileCommand} {githubLink}/{codeName} &&
-								         ./test {programParameters}"""
-
-				# Get output
-				result = subprocess.run(
-					script, shell = True,
-					capture_output = True,
-					text = True)
-
-				output = str(result.stdout)
+				output = CLI_execution(compileCommand, githubLink, codeName, programParameters)
 
 				# Compare answers
 				for answer in correctAnswers:
@@ -148,7 +119,7 @@ def auto_grade(args):
 						tempScore += fullScore / len(correctAnswers)
 
 					else:
-						failedAnswers.add(f"{name} Failed\nFolder name: {githubLink}\n")
+						failedAnswers.add(f"{reverse_name(name)} - {githubLink}")
 
 				# Assign scores
 				gradeSheet.loc[
@@ -160,13 +131,15 @@ def auto_grade(args):
 			tempScore = 0
 
 	# Print failed answers
+	print("Need to check these students' answers:\n")
 	for studentDict in failedAnswers:
 		print(studentDict)
 		
 	# Print student who didn't submit
+	print("\nThese students didn't submit:\n")
 	for i, j in zip(gradeSheet['Student'][1:], gradeSheet[f'{assignmentColumn}'][1:]):
 		if str(j) == "nan":
-			print(f"{i} didn't submit")
+			print(f"{reverse_name(i)}")
 			
 	# Show grades if requested
 	if showGrades:		
@@ -174,7 +147,7 @@ def auto_grade(args):
 		print("\n\n " +' Grades '.center(70, '*') + "\n\n")
 		
 		for i, j in zip(gradeSheet['Student'][1:], gradeSheet[f'{assignmentColumn}'][1:]):
-			print(f"{i}'s score is {j}")
+			print(f"{reverse_name(i)}\t{j}")
 	
 	# Store grades if requested
 	if storeGrades:
@@ -182,7 +155,6 @@ def auto_grade(args):
 		
 		# Separator
 		print("\n\n " +' Gradebook updated '.center(70, '*') + "\n\n")
-	
 
 if __name__ == "__main__":
 	args = handle_inputs()
