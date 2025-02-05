@@ -27,9 +27,9 @@ The autograder requires `Python 3` and the following libraries to function:
 
 The user can run this autograder by using this command: `python3 Autograder.py --assignment="<Assignment name>" --github-file-name="<Github classroom grades file>" --grade-file-name="<Canvas grades file>" --code-name="<Name of the program>" --compile-command="<Compile commands>" --program-arguments=<Arguments to the program>`
 
-**All command-line arguments to this program are required for this program to run!**
-
 ## Command-line Arguments Explanation
+
+Anything that is not optional is required to run the autograder.
 
 |Command-line Argument|Explanation                                               |
 |---------------------|----------------------------------------------------------|
