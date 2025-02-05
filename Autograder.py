@@ -3,7 +3,7 @@ import subprocess
 import pandas as pd
 
 from Reference import reference_code
-from Execution import CLI_execution
+from Compare import compare_answers
 
 def handle_inputs():
 	parser = argparse.ArgumentParser(description = "Process necessary arguments")
@@ -69,8 +69,14 @@ def auto_grade(args):
 	showGrades = args.showGrades
 	storeGrades = args.storeGrades
 	
-	# Put all reference outputs to a list
+	# ============================================
+	# Edit the reference_code function before use!
+	# ============================================
+	
 	correctAnswers = reference_code(programParameters)
+	
+	# ============================================
+	# ============================================
 	
 	# Read student's github information
 	githubInfo = pd.read_csv(githubFile)
@@ -97,9 +103,6 @@ def auto_grade(args):
 	# Separator
 	print("\n\n " +' Run Tests '.center(70, '*') + "\n\n")
 	
-	# Collect all failed students
-	failedAnswers = set()
-
 	# Loop through students' files and assign grades
 	# or report students whose code is not correct
 	for githubLink, studentID in zip(
@@ -111,15 +114,18 @@ def auto_grade(args):
 			gradeSheet['SIS Login ID']
 		):
 			if studentID == nmsuID:
-				output = CLI_execution(compileCommand, githubLink, codeName, programParameters)
-
-				# Compare answers
-				for answer in correctAnswers:
-					if answer in output:
-						tempScore += fullScore / len(correctAnswers)
-
-					else:
-						failedAnswers.add(f"{reverse_name(name)} - {githubLink}")
+			
+				# =============================================
+				# Edit the compare_answers function before use!
+				# =============================================
+				
+				tempScore = compare_answers(
+					compileCommand, githubLink, codeName, programParameters,
+					correctAnswers, fullScore
+				)
+				
+				# =============================================				
+				# =============================================
 
 				# Assign scores
 				gradeSheet.loc[
@@ -132,14 +138,26 @@ def auto_grade(args):
 
 	# Print failed answers
 	print("Need to check these students' answers:\n")
-	for studentDict in failedAnswers:
-		print(studentDict)
+	
+	for githubLink, studentID in zip(
+		githubInfo['student_repository_name'],
+		githubInfo['roster_identifier']
+	):
+		for name, nmsuID, grade in zip(
+			gradeSheet['Student'],
+			gradeSheet['SIS Login ID'],
+			gradeSheet[f"{assignmentColumn}"]
+		):
+			if studentID == nmsuID and grade != fullScore:
+				print(f"{reverse_name(name)} - {githubLink}")
 		
-	# Print student who didn't submit
+	# Print student who didn't submit and change their scores to 0
 	print("\nThese students didn't submit:\n")
 	for i, j in zip(gradeSheet['Student'][1:], gradeSheet[f'{assignmentColumn}'][1:]):
 		if str(j) == "nan":
 			print(f"{reverse_name(i)}")
+			
+	gradeSheet[f'{assignmentColumn}'] = gradeSheet[f'{assignmentColumn}'].fillna(0)
 			
 	# Show grades if requested
 	if showGrades:		
