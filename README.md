@@ -4,7 +4,7 @@
 
 **This repo is still under development!**
 
-**Update `Reference.py` and `Execution.py` according to the assignment requirements before using!**
+**Update `Reference.py` and `Compare.py` according to the assignment requirements before using!**
 
 This is an autograder for NMSU CS271 course. It will automatically pull all students' repos from Github Classroom and compare the outputs of students' code with the correct one. Based on the results of the comparisons, it will automatically assign a score to each student and update the *Gradebook* file accordingly.
 
@@ -23,13 +23,13 @@ The autograder requires `Python 3` and the following libraries to function:
 
 ## How to run this program
 
-`Reference.py` contains the function used to produce the correct answer(s). `Execution.py` contains the function used to run students' code. **Before running the autograder, the user must update these two files to reflect the assignment's requirements!**
+`Reference.py` contains the function used to produce the correct answer(s). `Compare.py` contains the function used to run students' code and compare results against the correct answer(s). **Before running the autograder, the user must update these two files to reflect the assignment's requirements!**
 
 The user can run this autograder by using this command: `python3 Autograder.py --assignment="<Assignment name>" --github-file-name="<Github classroom grades file>" --grade-file-name="<Canvas grades file>" --code-name="<Name of the program>" --compile-command="<Compile commands>" --program-arguments=<Arguments to the program>`
 
 ## Command-line Arguments Explanation
 
-Anything that is not optional is required to run the autograder.
+**Anything that is not optional is required to run the autograder!**
 
 |Command-line Argument|Explanation                                               |
 |---------------------|----------------------------------------------------------|
