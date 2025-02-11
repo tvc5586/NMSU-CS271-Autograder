@@ -34,7 +34,7 @@ def handle_inputs():
 						help = "Compilation commands", 
 						required=True)
 	# TODO: Convert this into list so multiple params can be tested
-	parser.add_argument("--program-arguments", type = int, #nargs = "+", 
+	parser.add_argument("--program-arguments", type = str, #nargs = "+", 
 						dest = "programParameters",
 						help = "Arguments for the program", 
 						required=True)
