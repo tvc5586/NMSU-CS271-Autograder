@@ -95,7 +95,7 @@ def auto_grade(args):
 	tempScore = 0
     
 	# Download students' repos
-	for i in githubInfo['student_repository_url'][1:]:
+	for i in githubInfo['student_repository_url']:
 		link = i.split("/", 3)[3]
 		githubDownload = ['git', 'clone', f'git@github.com:{link}.git']
 		_ = subprocess.run(githubDownload)
