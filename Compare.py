@@ -14,8 +14,12 @@ def compare_answers(
 	tempScore = 0
 
 	# TODO: modify to work with multiple params
+    #
+    # At this point, the below string is designed
+    # to work with Makefile
+    #
+    # Modifify if necessary
 	script = f"""cd {githubLink} &&
-               cp ../weather-small.csv . &&
                {compileCommand}"""
 
 	# Get output
