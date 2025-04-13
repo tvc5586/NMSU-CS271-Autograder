@@ -14,8 +14,9 @@ def compare_answers(
 	tempScore = 0
 
 	# TODO: modify to work with multiple params
-	script = f"""{compileCommand} {githubLink}/{codeName} &&
-				 ./test {programParameters}"""
+	script = f"""cd {githubLink} &&
+               cp ../weather-small.csv . &&
+               {compileCommand}"""
 
 	# Get output
 	result = subprocess.run(
@@ -30,4 +31,4 @@ def compare_answers(
 		if answer in output:
 			tempScore += fullScore / len(correctAnswers)
 
-	return tempScore
+	return round(tempScore, 5)
