@@ -33,7 +33,7 @@ The user can run this autograder by using this command: `python3 Autograder.py -
 
 |Command-line Argument|Explanation                                               |
 |---------------------|----------------------------------------------------------|
-|`--assignment`       |Name of the assignment (e.g. Lab 1)                       |
+|`--assignment`       |Words in the assignment title (e.g. Lab 1, Calculator)    |
 |`--github-file-name` |Name of Github classroom's *Grades* file                  |
 |`--grade-file-name`  |Name of Canvas's *Gradebook* file                         |
 |`--code-name`        |Name of the program students need to complete             |
